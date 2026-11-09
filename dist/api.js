@@ -9,9 +9,9 @@ export async function request(path,{method='GET',body,token=session?.access_toke
  try{await refreshing;token=session.access_token;}finally{refreshing=null;}
  }
  const r=await fetch(config.supabaseUrl+path,{method,headers:{apikey:config.publishableKey,...(token?{Authorization:`Bearer ${token}`} :{}),'Content-Type':'application/json',...headers},body:body===undefined?undefined:JSON.stringify(body)});
- if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(e.message||e.msg||'Falha na conexão com o WMS');}return r.status===204?null:r.json();
+ if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(path.startsWith('/auth/v1/token')?'Usuário ou senha inválidos.':e.message||e.msg||'Falha na conexão com o WMS');}return r.status===204?null:r.json();
 }
-export async function login(email,password){session=await request('/auth/v1/token?grant_type=password',{method:'POST',body:{email,password},token:null});return session.user;}
+export async function login(username,password){const normalized=username.trim().toLowerCase();const email=normalized.includes('@')?normalized:normalized+'@users.wms.invalid';session=await request('/auth/v1/token?grant_type=password',{method:'POST',body:{email,password},token:null});return session.user;}
 export async function logout(){if(session)await request('/auth/v1/logout',{method:'POST'});session=null;}
 export const currentUser=()=>session?.user;
 export const rpc=(name,body)=>request('/rest/v1/rpc/'+name,{method:'POST',body});
