@@ -1,0 +1,17 @@
+{
+  "name": "wms-operacao",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "build": "node scripts/verify-build.mjs",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "^0.5.10",
+    "wrangler": "4.151.0"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
